@@ -1,5 +1,7 @@
 package org.duncati.promotionengine.test;
 
+import org.duncati.promotionengine.Cart;
+import org.duncati.promotionengine.ICart;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
@@ -13,9 +15,13 @@ import java.util.Map;
 
 public class PromotionEngineTest {
 
+    // TODO put these somewhere else:
+    private static Map<String, BigInteger> prices=new HashMap<>();
+    private static Map<List<String>, BigInteger> promotions=new HashMap<>();
+
     @BeforeAll
-    static void setPrices() {
-        Map<String, BigInteger> prices=new HashMap<>();
+    static void initializePrices() {
+        System.out.println("Initializing prices");
         prices.put("A", BigInteger.valueOf(50));
         prices.put("B", BigInteger.valueOf(30));
         prices.put("C", BigInteger.valueOf(20));
@@ -23,8 +29,8 @@ public class PromotionEngineTest {
     }
 
     @BeforeAll
-    static void setPromotions() {
-        Map<List<String>, BigInteger> promotions=new HashMap<>();
+    static void initializePromotions() {
+        System.out.println("Initializing promotions");
         promotions.put(Arrays.asList("A", "A", "A"), BigInteger.valueOf(130));
         promotions.put(Arrays.asList("B", "B"), BigInteger.valueOf(45));
         promotions.put(Arrays.asList("C", "D"), BigInteger.valueOf(30));
@@ -32,32 +38,32 @@ public class PromotionEngineTest {
 
     @Test
     @DisplayName("Test of Scenario A (no promotions)")
-    static void testScenarioA() {
-        Cart cart=new Cart();
+    void testScenarioA() {
+        ICart cart=new Cart();
         cart.addItem(("A"));
         cart.addItem(("B"));
         cart.addItem(("C"));
-        Assertions.assertEquals(cart.getTotal(), (BigInteger.valueOf(100)));
+        Assertions.assertEquals(BigInteger.valueOf(100), cart.getTotal());
     }
 
     @Test
     @DisplayName("Test of Scenario B (3 promotions)")
-    static void testScenarioB() {
-        Cart cart=new Cart();
+    void testScenarioB() {
+        ICart cart=new Cart();
         cart.addItem("A", 5);
         cart.addItem("B", 5);
         cart.addItem("C");
-        Assertions.assertEquals(cart.getTotal(), (BigInteger.valueOf(370)));
+        Assertions.assertEquals(BigInteger.valueOf(370), cart.getTotal());
     }
 
     @Test
     @DisplayName("Test of Scenario C (4 promotions, including a multiSku promotion)")
-    static void testScenarioC() {
-        Cart cart=new Cart();
+    void testScenarioC() {
+        ICart cart=new Cart();
         cart.addItem("A", 3);
         cart.addItem("B", 5);
         cart.addItem("C");
         cart.addItem("D");
-        Assertions.assertEquals(cart.getTotal(), (BigInteger.valueOf(280)));
+        Assertions.assertEquals(BigInteger.valueOf(280), cart.getTotal());
     }
 }
