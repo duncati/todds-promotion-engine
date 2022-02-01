@@ -2,22 +2,20 @@ package org.duncati.promotionengine.test;
 
 import org.duncati.promotionengine.Cart;
 import org.duncati.promotionengine.ICart;
+import org.duncati.promotionengine.Promotion;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 
 import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PromotionEngineTest {
 
     // TODO put these somewhere else:
     private static Map<String, BigInteger> prices=new HashMap<>();
-    private static Map<List<String>, BigInteger> promotions=new HashMap<>();
+    private static Set<Promotion> promotions=new HashSet<>();
 
     @BeforeAll
     static void initializePrices() {
@@ -31,9 +29,9 @@ public class PromotionEngineTest {
     @BeforeAll
     static void initializePromotions() {
         System.out.println("Initializing promotions");
-        promotions.put(Arrays.asList("A", "A", "A"), BigInteger.valueOf(130));
-        promotions.put(Arrays.asList("B", "B"), BigInteger.valueOf(45));
-        promotions.put(Arrays.asList("C", "D"), BigInteger.valueOf(30));
+        promotions.add(new Promotion(Arrays.asList("A", "A", "A"), BigInteger.valueOf(130)));
+        promotions.add(new Promotion(Arrays.asList("B", "B"), BigInteger.valueOf(45)));
+        promotions.add(new Promotion(Arrays.asList("C", "D"), BigInteger.valueOf(30)));
     }
 
     @Test
