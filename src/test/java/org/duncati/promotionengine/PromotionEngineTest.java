@@ -1,8 +1,5 @@
-package org.duncati.promotionengine.test;
+package org.duncati.promotionengine;
 
-import org.duncati.promotionengine.Cart;
-import org.duncati.promotionengine.ICart;
-import org.duncati.promotionengine.Promotion;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
