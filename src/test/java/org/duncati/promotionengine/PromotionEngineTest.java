@@ -10,25 +10,26 @@ import java.util.*;
 
 public class PromotionEngineTest {
 
-    // TODO put these somewhere else:
-    private static Map<String, BigInteger> prices=new HashMap<>();
-    private static Set<Promotion> promotions=new HashSet<>();
 
     @BeforeAll
     static void initializePrices() {
         System.out.println("Initializing prices");
+        Map<String, BigInteger> prices=new HashMap<>();
         prices.put("A", BigInteger.valueOf(50));
         prices.put("B", BigInteger.valueOf(30));
         prices.put("C", BigInteger.valueOf(20));
         prices.put("D", BigInteger.valueOf(15));
+        Cart.setPrices(new InMemoryPriceRepository(prices));
     }
 
     @BeforeAll
     static void initializePromotions() {
         System.out.println("Initializing promotions");
-        promotions.add(new Promotion(Arrays.asList("A", "A", "A"), BigInteger.valueOf(130)));
-        promotions.add(new Promotion(Arrays.asList("B", "B"), BigInteger.valueOf(45)));
-        promotions.add(new Promotion(Arrays.asList("C", "D"), BigInteger.valueOf(30)));
+        InMemoryPromotionRepository promotions=new InMemoryPromotionRepository();
+        promotions.addPromotion(new Promotion(Arrays.asList("A", "A", "A"), BigInteger.valueOf(130)));
+        promotions.addPromotion(new Promotion(Arrays.asList("B", "B"), BigInteger.valueOf(45)));
+        promotions.addPromotion(new Promotion(Arrays.asList("C", "D"), BigInteger.valueOf(30)));
+        Cart.setPromotions(promotions);
     }
 
     @Test

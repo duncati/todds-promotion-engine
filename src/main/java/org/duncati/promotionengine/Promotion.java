@@ -3,7 +3,7 @@ package org.duncati.promotionengine;
 import java.math.BigInteger;
 import java.util.List;
 
-public class Promotion {
+public class Promotion implements IPromotion {
 
     private final List<String> skus;
     private final BigInteger price;
