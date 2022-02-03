@@ -8,50 +8,39 @@ import java.util.List;
 // TODO: improve calculate method using better datastores for promotions and prices
 public class Cart implements ICart {
 
-    private final List<String> items=new ArrayList<>(); // list of non-discounted items (or all items before promotions are counted)
-    private final List<IPromotion> promotedItems=new ArrayList<>(); // list of promotions in the cart (after calculate)
+    private final Items items=new Items();
+    private final List<BasePromotion> promotedItems=new ArrayList<>(); // list of promotions in the cart (after calculate)
     private BigInteger total=BigInteger.ZERO; // cache of the cart's total value
     private boolean dirty=false; // flag to recompute total if cart contents are changed
 
-    // TODO improve these:
+    // TODO improve this:
     private static IPromotionRepository promotions; // this is a temporary hack to make the test work
-    private static IPriceRepository prices; // this is a temporary hack to make the test work
 
     public Cart() {
     }
 
     @Override
     public void addItem(String sku) {
-        items.add(sku);
+        items.addItem(sku);
         setDirty();
     }
 
     @Override
     public void addItem(String sku, int quantity) {
-        for (int i=0; i<quantity; i++) {
-            items.add(sku);
-        }
+        items.addItem(sku, quantity);
         setDirty();
     }
 
     @Override
     public void removeItem(String sku) {
-        if (items.remove(sku)) {
-            setDirty();
-        } else {
-            // TODO report error, item not found in cart
-        }
+        items.removeItem(sku);
+        setDirty();
     }
 
     @Override
     public void removeItem(String sku, int quantity) {
-        for (int i=0; i<quantity; i++) {
-            if (items.remove(sku)) {
-                setDirty();
-            } else {
-                // TODO report error, item not found in cart
-            }
-        }
+        items.removeItem(sku, quantity);
+        setDirty();
     }
 
     private void setDirty() {
@@ -66,7 +55,7 @@ public class Cart implements ICart {
         return total;
     }
 
-    private Collection<IPromotion> getPromotions() {
+    private Collection<BasePromotion> getPromotions() {
         // TODO implement this (and move it to another class)
         return promotions.getPromotions();
     }
@@ -76,28 +65,26 @@ public class Cart implements ICart {
         promotions=promotionsHack;
     }
 
-    // TODO replace this hack with a factory or something
-    public static void setPrices(IPriceRepository pricesHack) {
-        prices=pricesHack;
-    }
-
     private void calculate() {
+        //System.out.println("calculate");
         // TODO improve promotion plugin/factory interface:
-        for (IPromotion promotion: getPromotions()) {
+        for (BasePromotion promotion: getPromotions()) {
             int times=promotion.apply(items);
+            //System.out.println("promotion "+promotion+" can be applied "+times+" times");
             for (int i=0; i<times; i++) {
-                for (String item: promotion.getSkus()) {
-                    items.remove(item);
+                for (String sku: promotion.getItems().getSkus()) {
+                    items.removeItem(sku, promotion.getItems().getCount(sku));
                 }
                 promotedItems.add(promotion);
             }
         }
         total=BigInteger.ZERO;
-        for (String item: items) {
-            // TODO improve price database:
-            total=total.add(prices.getPrice(item));
+        for (String sku: items.getSkus()) {
+            // TODO get this price from the interface via a factory, not the singleton
+            total=total.add(InMemoryPriceRepository.INSTANCE.getPrice(sku).multiply(BigInteger.valueOf(items.getCount(sku))));
+            //System.out.println("after "+items.getCount(sku)+" "+sku+"'s subtotal="+total);
         }
-        for (IPromotion promotion: promotedItems) {
+        for (BasePromotion promotion: promotedItems) {
             total=total.add(promotion.getPrice());
         }
         dirty=false;

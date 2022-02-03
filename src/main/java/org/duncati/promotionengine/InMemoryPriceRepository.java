@@ -1,19 +1,23 @@
 package org.duncati.promotionengine;
 
 import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.Map;
 
-public class InMemoryPriceRepository implements IPriceRepository {
+public enum InMemoryPriceRepository implements IPriceRepository {
 
-    private final Map<String, BigInteger> prices;
+    INSTANCE;
 
-    public InMemoryPriceRepository(Map<String, BigInteger> prices) {
-        this.prices=prices;
+    private final Map<String, BigInteger> prices=new HashMap<>();
+
+    @Override
+    public void setPrice(String sku, BigInteger price) {
+        prices.put(sku, price);
     }
 
     @Override
     public BigInteger getPrice(String sku) {
-        // TODO handle unknown skus
+        // TODO handle non-existent skus
         return prices.get(sku);
     }
 }

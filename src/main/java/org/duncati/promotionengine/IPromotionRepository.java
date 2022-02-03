@@ -4,5 +4,5 @@ import java.util.Collection;
 
 public interface IPromotionRepository {
 
-    public Collection<IPromotion> getPromotions();
+    Collection<BasePromotion> getPromotions();
 }
