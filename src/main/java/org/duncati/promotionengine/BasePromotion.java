@@ -34,7 +34,7 @@ public abstract class BasePromotion {
      * cartItems contains 12 A's and the promotion is for 5 A's apply() would return 2. It does _not_ modify the contents
      * of the passed in cartItems.
      * @param cartItems The items for example in a Cart that promotions could be applied to
-     * @return
+     * @return the number of times this promotion can be applied to the given cart items
      */
     public int apply(Items cartItems) {
         Items cartItemsCopy=new Items(cartItems);

@@ -41,7 +41,7 @@ public interface ICart {
     /**
      * Calculates the total price of the items and promotions in this cart.
      * @return the total price of the cart
-     * @throws PromotionEngineException any error encountered during price calculation (i.e. missing prices for sku)
+     * @throws DataNotFoundException any error encountered during price calculation (i.e. missing prices for sku)
      */
     BigInteger getTotal() throws DataNotFoundException;
 }

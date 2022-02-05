@@ -74,20 +74,17 @@ public class Cart implements ICart {
      *          remove the promoted items from the copy
      *          accumulate the promotion price to the total
      *    * for each item left in the copy, accumulate the price to the total
-     *
      * @throws DataNotFoundException thrown if the price data cannot be found (i.e. cannot be read from the repository)
      */
     private void calculateTotal() throws DataNotFoundException {
         Items itemsCopy=new Items(items);
         BigInteger price=BigInteger.ZERO;
         for (BasePromotion promotion: getPromotions()) {
-            int times=promotion.apply(itemsCopy);
-            for (int i=0; i<times; i++) {
-                for (String sku: promotion.getItems().getSkus()) {
-                    itemsCopy.removeItem(sku, promotion.getItems().getCount(sku));
-                }
+            int timesPromotionCanBeApplied=promotion.apply(itemsCopy);
+            for (String sku: promotion.getItems().getSkus()) {
+                itemsCopy.removeItem(sku, timesPromotionCanBeApplied*promotion.getItems().getCount(sku));
             }
-            price=price.add(promotion.getPrice().multiply(BigInteger.valueOf(times)));
+            price=price.add(promotion.getPrice().multiply(BigInteger.valueOf(timesPromotionCanBeApplied)));
         }
         for (String sku: itemsCopy.getSkus()) {
             price=price.add(getPrice(sku).multiply(BigInteger.valueOf(itemsCopy.getCount(sku))));
