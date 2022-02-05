@@ -2,6 +2,10 @@ package org.duncati.promotionengine;
 
 import java.math.BigInteger;
 
+/**
+ * The parent class of all promotions, this class stores the promotions items in an Items object. Subclasses must
+ * define what price to return for their type of promotion.
+ */
 public abstract class BasePromotion {
 
     private final Items items;
@@ -10,18 +14,34 @@ public abstract class BasePromotion {
         this.items=items;
     }
 
-    public abstract BigInteger getPrice();
+    /**
+     * Returns the price for this promotion.
+     * @return the promotion's price
+     * @throws DataNotFoundException Thrown if the backing repository fails to retrieve optional price information
+     */
+    public abstract BigInteger getPrice() throws DataNotFoundException;
 
+    /**
+     * Returns this promotion's items.
+     * @return the items in this promotion
+     */
     public Items getItems() {
         return items;
     }
 
-    public int apply(Items items) {
-        Items itemsCopy=new Items(items);
+    /**
+     * This method counts the number of times this promotion can be applied to the given cart items. For example, if
+     * cartItems contains 12 A's and the promotion is for 5 A's apply() would return 2. It does _not_ modify the contents
+     * of the passed in cartItems.
+     * @param cartItems The items for example in a Cart that promotions could be applied to
+     * @return
+     */
+    public int apply(Items cartItems) {
+        Items cartItemsCopy=new Items(cartItems);
         int applyCount=0;
         while (true) {
             for (String sku: getItems().getSkus()) {
-                if (itemsCopy.removeItem(sku, getItems().getCount(sku))!=getItems().getCount(sku)) {
+                if (cartItemsCopy.removeItem(sku, getItems().getCount(sku))!=getItems().getCount(sku)) {
                     return applyCount;
                 }
             }
@@ -31,6 +51,10 @@ public abstract class BasePromotion {
 
     @Override
     public String toString() {
-        return getItems()+" = "+getPrice();
+        try {
+            return getItems()+" = "+getPrice();
+        } catch (DataNotFoundException e) {
+            return getItems()+" PROMOTION IS MISSING PRICE DATA";
+        }
     }
 }

@@ -14,10 +14,10 @@ public class InMemoryRepository implements IRepository {
     }
 
     @Override
-    public BigInteger getPrice(String sku) {
+    public BigInteger getPrice(String sku) throws DataNotFoundException {
         BigInteger price=prices.get(sku);
         if (price==null) {
-            throw new PromotionEngineException("No price found for sku "+sku);
+            throw new DataNotFoundException("No price found for sku "+sku);
         }
         return price;
     }
@@ -27,7 +27,8 @@ public class InMemoryRepository implements IRepository {
         return Collections.unmodifiableCollection(promotions);
     }
 
-    // future improvement: ensure that there are no other promotions with the same Sku list (or select the cheaper price)
+    // a future improvement: ensure that there are no other promotions with the same Sku list (or select the cheaper
+    // if there are more than one)
     @Override
     public void addPromotion(BasePromotion promotion) {
         promotions.add(promotion);

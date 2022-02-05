@@ -5,13 +5,35 @@ import java.util.Collection;
 
 public interface IRepository {
 
-    // sku price data
+    /**
+     * This sets the price of this sku to the given price.
+     * @param sku the stop keeping unit
+     * @param price the price of this unit
+     */
     void setPrice(String sku, BigInteger price);
-    BigInteger getPrice(String sku);
 
-    // promotion data
+    /**
+     * This returns the price of this sku to the given price.
+     * @param sku the stop keeping unit
+     * @return the price of this sku
+     */
+    BigInteger getPrice(String sku) throws DataNotFoundException;
+
+    /**
+     * Returns a collection of all known promotions.
+     * @return all promotions
+     */
     Collection<BasePromotion> getPromotions();
-    void addPromotion(BasePromotion promotion);
-    void removePromotion(BasePromotion promotion);
 
+    /**
+     * Adds this promotion to the data store.
+     * @param promotion the promotion to add
+     */
+    void addPromotion(BasePromotion promotion);
+
+    /**
+     * Removes this promotion to the data store.
+     * @param promotion the promotion to remove
+     */
+    void removePromotion(BasePromotion promotion);
 }

@@ -5,12 +5,21 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * This holds the items in the cart, calculates the total price and while doing so applies any provided promotions.
+ * Note this class is not thread safe.
+ */
 public class Cart implements ICart {
 
+    // holds and manages the items in the cart (allowing for various item management implementations to be written without
+    // modifying this class)
     private final Items items=new Items();
-    private final List<BasePromotion> promotedItems=new ArrayList<>(); // list of promotions in the cart (after calculate)
-    private BigInteger total=BigInteger.ZERO; // cache of the cart's total value
-    private boolean dirty=false; // flag to recompute total if cart contents are changed
+
+    // cache of the cart's total value (managed by the dirty flag below)
+    private BigInteger totalPrice=BigInteger.ZERO;
+
+    // flag to recompute the total price if cart's contents are changed
+    private boolean dirty=false;
 
     @Override
     public void addItem(String sku) {
@@ -33,7 +42,7 @@ public class Cart implements ICart {
 
     @Override
     public void removeItem(String sku, int quantity) {
-        if (items.removeItem(sku, quantity)==quantity) {
+        if (items.removeItem(sku, quantity)>0) {
             setDirty();
         }
     }
@@ -43,41 +52,47 @@ public class Cart implements ICart {
     }
 
     @Override
-    public BigInteger getTotal() {
+    public BigInteger getTotal() throws DataNotFoundException {
         if (dirty) {
-            calculate();
+            calculateTotal();
         }
-        return total;
+        return totalPrice;
     }
 
     private Collection<BasePromotion> getPromotions() {
         return RepositoryFactory.INSTANCE.getRepository().getPromotions();
     }
 
-    private BigInteger getPrice(String sku) {
+    private BigInteger getPrice(String sku) throws DataNotFoundException {
         return RepositoryFactory.INSTANCE.getRepository().getPrice(sku);
     }
 
-    private void calculate() {
-        //System.out.println("calculate");
+    /**
+     * This runs through the following stages to compute the total price of the items in this cart:
+     *    * make a copy of the cart's items (copy)
+     *    * for each known promotion, count how many times that promotion can be applied
+     *          remove the promoted items from the copy
+     *          accumulate the promotion price to the total
+     *    * for each item left in the copy, accumulate the price to the total
+     *
+     * @throws DataNotFoundException thrown if the price data cannot be found (i.e. cannot be read from the repository)
+     */
+    private void calculateTotal() throws DataNotFoundException {
+        Items itemsCopy=new Items(items);
+        BigInteger price=BigInteger.ZERO;
         for (BasePromotion promotion: getPromotions()) {
-            int times=promotion.apply(items);
-            //System.out.println("promotion "+promotion+" can be applied "+times+" times");
+            int times=promotion.apply(itemsCopy);
             for (int i=0; i<times; i++) {
                 for (String sku: promotion.getItems().getSkus()) {
-                    items.removeItem(sku, promotion.getItems().getCount(sku));
+                    itemsCopy.removeItem(sku, promotion.getItems().getCount(sku));
                 }
-                promotedItems.add(promotion);
             }
+            price=price.add(promotion.getPrice().multiply(BigInteger.valueOf(times)));
         }
-        total=BigInteger.ZERO;
-        for (String sku: items.getSkus()) {
-            total=total.add(getPrice(sku).multiply(BigInteger.valueOf(items.getCount(sku))));
-            //System.out.println("after "+items.getCount(sku)+" "+sku+"'s subtotal="+total);
+        for (String sku: itemsCopy.getSkus()) {
+            price=price.add(getPrice(sku).multiply(BigInteger.valueOf(itemsCopy.getCount(sku))));
         }
-        for (BasePromotion promotion: promotedItems) {
-            total=total.add(promotion.getPrice());
-        }
+        totalPrice=price;
         dirty=false;
     }
 }
