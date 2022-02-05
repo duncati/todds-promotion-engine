@@ -1,7 +1,6 @@
 package org.duncati.promotionengine;
 
 import java.math.BigInteger;
-import java.util.List;
 
 public abstract class BasePromotion {
 

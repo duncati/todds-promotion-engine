@@ -2,7 +2,6 @@ package org.duncati.promotionengine;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.List;
 
 public class PercentagePromotion extends BasePromotion {
     // example of a percentage promotion, needs work FIXME
@@ -24,7 +23,7 @@ public class PercentagePromotion extends BasePromotion {
         for (String sku: getItems().getSkus()) {
             // TODO get this price from the interface via a factory, not the singleton
             // FIXME code duplication from Cart.calculate
-            total=total.add(InMemoryPriceRepository.INSTANCE.getPrice(sku).multiply(BigInteger.valueOf(getItems().getCount(sku))));
+            total=total.add(RepositoryFactory.INSTANCE.getRepository().getPrice(sku).multiply(BigInteger.valueOf(getItems().getCount(sku))));
         }
         return new BigDecimal(total).multiply(percentageOfPrice).toBigInteger();
     }

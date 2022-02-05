@@ -11,22 +11,17 @@ import java.util.*;
 public class PromotionEngineTest {
 
     @BeforeAll
-    static void initializePrices() {
-        System.out.println("Initializing prices");
-        InMemoryPriceRepository.INSTANCE.setPrice("A", BigInteger.valueOf(50));
-        InMemoryPriceRepository.INSTANCE.setPrice("B", BigInteger.valueOf(30));
-        InMemoryPriceRepository.INSTANCE.setPrice("C", BigInteger.valueOf(20));
-        InMemoryPriceRepository.INSTANCE.setPrice("D", BigInteger.valueOf(15));
-    }
-
-    @BeforeAll
-    static void initializePromotions() {
-        System.out.println("Initializing promotions");
-        InMemoryPromotionRepository promotions=new InMemoryPromotionRepository();
-        promotions.addPromotion(new BundlePromotion(new Items(Arrays.asList("A", "A", "A")), BigInteger.valueOf(130)));
-        promotions.addPromotion(new BundlePromotion(new Items(Arrays.asList("B", "B")), BigInteger.valueOf(45)));
-        promotions.addPromotion(new BundlePromotion(new Items(Arrays.asList("C", "D")), BigInteger.valueOf(30)));
-        Cart.setPromotions(promotions);
+    static void initializeRepository() {
+        System.out.println("Initializing repository");
+        RepositoryFactory.INSTANCE.setRepositoryType(RepositoryType.IN_MEMORY);
+        IRepository repository=RepositoryFactory.INSTANCE.getRepository();
+        repository.setPrice("A", BigInteger.valueOf(50));
+        repository.setPrice("B", BigInteger.valueOf(30));
+        repository.setPrice("C", BigInteger.valueOf(20));
+        repository.setPrice("D", BigInteger.valueOf(15));
+        repository.addPromotion(new BundlePromotion(new Items(Arrays.asList("A", "A", "A")), BigInteger.valueOf(130)));
+        repository.addPromotion(new BundlePromotion(new Items(Arrays.asList("B", "B")), BigInteger.valueOf(45)));
+        repository.addPromotion(new BundlePromotion(new Items(Arrays.asList("C", "D")), BigInteger.valueOf(30)));
     }
 
     @Test

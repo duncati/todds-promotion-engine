@@ -69,18 +69,14 @@ public class Items {
 
     public void removeItems(Items itemsToRemove) {
         if (this==itemsToRemove) {
-            // TODO handle this better
-            System.err.println("Concurrent modification of Items is not allowed");
-            return;
+            throw new ConcurrentModificationException("Adding and removing items concurrently is not allowed");
         }
         itemsToRemove.entrySet().forEach((entry) -> removeItem(entry.getKey(), entry.getValue()));
     }
 
     public void addItems(Items itemsToAdd) {
         if (this==itemsToAdd) {
-            // TODO handle this better
-            System.err.println("Concurrent modification of Items is not allowed");
-            return;
+            throw new ConcurrentModificationException("Adding and removing items concurrently is not allowed");
         }
         itemsToAdd.entrySet().forEach((entry) -> addItem(entry.getKey(), entry.getValue()));
     }
