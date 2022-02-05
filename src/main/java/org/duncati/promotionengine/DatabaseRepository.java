@@ -1,17 +1,17 @@
 package org.duncati.promotionengine;
 
-import java.math.BigInteger;
+import java.math.BigDecimal;
 import java.util.Collection;
 
 public class DatabaseRepository implements IRepository {
 
     @Override
-    public void setPrice(String sku, BigInteger price) {
+    public void setPrice(String sku, BigDecimal price) {
         throw new UnsupportedOperationException("DatabaseRepository.setPrice is not implemented");
     }
 
     @Override
-    public BigInteger getPrice(String sku) {
+    public BigDecimal getPrice(String sku) {
         throw new UnsupportedOperationException("DatabaseRepository.getPrice is not implemented");
     }
 

@@ -1,9 +1,7 @@
 package org.duncati.promotionengine;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * This holds the items in the cart, calculates the total price and while doing so applies any provided promotions.
@@ -16,7 +14,7 @@ public class Cart implements ICart {
     private final Items items=new Items();
 
     // cache of the cart's total value (managed by the dirty flag below)
-    private BigInteger totalPrice=BigInteger.ZERO;
+    private BigDecimal totalPrice=BigDecimal.ZERO;
 
     // flag to recompute the total price if cart's contents are changed
     private boolean dirty=false;
@@ -52,7 +50,7 @@ public class Cart implements ICart {
     }
 
     @Override
-    public BigInteger getTotal() throws DataNotFoundException {
+    public BigDecimal getTotal() throws DataNotFoundException {
         if (dirty) {
             calculateTotal();
         }
@@ -63,7 +61,7 @@ public class Cart implements ICart {
         return RepositoryFactory.INSTANCE.getRepository().getPromotions();
     }
 
-    private BigInteger getPrice(String sku) throws DataNotFoundException {
+    private BigDecimal getPrice(String sku) throws DataNotFoundException {
         return RepositoryFactory.INSTANCE.getRepository().getPrice(sku);
     }
 
@@ -78,16 +76,16 @@ public class Cart implements ICart {
      */
     private void calculateTotal() throws DataNotFoundException {
         Items itemsCopy=new Items(items);
-        BigInteger price=BigInteger.ZERO;
+        BigDecimal price=BigDecimal.ZERO;
         for (BasePromotion promotion: getPromotions()) {
             int timesPromotionCanBeApplied=promotion.apply(itemsCopy);
             for (String sku: promotion.getItems().getSkus()) {
                 itemsCopy.removeItem(sku, timesPromotionCanBeApplied*promotion.getItems().getCount(sku));
             }
-            price=price.add(promotion.getPrice().multiply(BigInteger.valueOf(timesPromotionCanBeApplied)));
+            price=price.add(promotion.getPrice().multiply(BigDecimal.valueOf(timesPromotionCanBeApplied)));
         }
         for (String sku: itemsCopy.getSkus()) {
-            price=price.add(getPrice(sku).multiply(BigInteger.valueOf(itemsCopy.getCount(sku))));
+            price=price.add(getPrice(sku).multiply(BigDecimal.valueOf(itemsCopy.getCount(sku))));
         }
         totalPrice=price;
         dirty=false;

@@ -1,6 +1,6 @@
 package org.duncati.promotionengine;
 
-import java.math.BigInteger;
+import java.math.BigDecimal;
 
 /**
  * The parent class of all promotions, this class stores the promotions items in an Items object. Subclasses must
@@ -19,7 +19,7 @@ public abstract class BasePromotion {
      * @return the promotion's price
      * @throws DataNotFoundException Thrown if the backing repository fails to retrieve optional price information
      */
-    public abstract BigInteger getPrice() throws DataNotFoundException;
+    public abstract BigDecimal getPrice() throws DataNotFoundException;
 
     /**
      * Returns this promotion's items.
@@ -31,22 +31,17 @@ public abstract class BasePromotion {
 
     /**
      * This method counts the number of times this promotion can be applied to the given cart items. For example, if
-     * cartItems contains 12 A's and the promotion is for 5 A's apply() would return 2. It does _not_ modify the contents
+     * cartItems contains 12 A's and the promotion is for 5 A's then apply() returns 2. It does not modify the contents
      * of the passed in cartItems.
      * @param cartItems The items for example in a Cart that promotions could be applied to
      * @return the number of times this promotion can be applied to the given cart items
      */
     public int apply(Items cartItems) {
-        Items cartItemsCopy=new Items(cartItems);
-        int applyCount=0;
-        while (true) {
-            for (String sku: getItems().getSkus()) {
-                if (cartItemsCopy.removeItem(sku, getItems().getCount(sku))!=getItems().getCount(sku)) {
-                    return applyCount;
-                }
-            }
-            applyCount++;
+        int applyCount=Integer.MAX_VALUE;
+        for (String sku : getItems().getSkus()) {
+            applyCount=Math.min(applyCount, cartItems.getCount(sku)/getItems().getCount(sku));
         }
+        return applyCount;
     }
 
     @Override

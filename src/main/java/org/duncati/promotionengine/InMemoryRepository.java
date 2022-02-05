@@ -1,21 +1,21 @@
 package org.duncati.promotionengine;
 
-import java.math.BigInteger;
+import java.math.BigDecimal;
 import java.util.*;
 
 public class InMemoryRepository implements IRepository {
 
-    private final Map<String, BigInteger> prices=new HashMap<>();
+    private final Map<String, BigDecimal> prices=new HashMap<>();
     private final Set<BasePromotion> promotions=new HashSet<>();
 
     @Override
-    public void setPrice(String sku, BigInteger price) {
+    public void setPrice(String sku, BigDecimal price) {
         prices.put(sku, price);
     }
 
     @Override
-    public BigInteger getPrice(String sku) throws DataNotFoundException {
-        BigInteger price=prices.get(sku);
+    public BigDecimal getPrice(String sku) throws DataNotFoundException {
+        BigDecimal price=prices.get(sku);
         if (price==null) {
             throw new DataNotFoundException("No price found for sku "+sku);
         }

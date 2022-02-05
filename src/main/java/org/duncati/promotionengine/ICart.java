@@ -1,6 +1,6 @@
 package org.duncati.promotionengine;
 
-import java.math.BigInteger;
+import java.math.BigDecimal;
 
 /**
  * Defines the operations available for Carts which are to manage the items (sku's) in the cart and from those
@@ -43,5 +43,5 @@ public interface ICart {
      * @return the total price of the cart
      * @throws DataNotFoundException any error encountered during price calculation (i.e. missing prices for sku)
      */
-    BigInteger getTotal() throws DataNotFoundException;
+    BigDecimal getTotal() throws DataNotFoundException;
 }

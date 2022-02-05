@@ -1,7 +1,7 @@
 package org.duncati.promotionengine;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
+import java.math.BigDecimal;
 
 /**
  * An example of a percentage based promotion establishing the extensibility of the Promotion class structure.
@@ -29,13 +29,13 @@ public class PercentagePromotion extends BasePromotion {
     }
 
     // FIXME there's some obvious rounding questions here that must be answered before this class could be used correctly
-    public BigInteger getPrice() throws DataNotFoundException {
-        BigInteger total=BigInteger.ZERO;
+    public BigDecimal getPrice() throws DataNotFoundException {
+        BigDecimal total=BigDecimal.ZERO;
         for (String sku: getItems().getSkus()) {
             // TODO get this price from the interface via a factory, not the singleton
             // FIXME code duplication from Cart.calculate
-            total=total.add(RepositoryFactory.INSTANCE.getRepository().getPrice(sku).multiply(BigInteger.valueOf(getItems().getCount(sku))));
+            total=total.add(RepositoryFactory.INSTANCE.getRepository().getPrice(sku).multiply(BigDecimal.valueOf(getItems().getCount(sku))));
         }
-        return new BigDecimal(total).multiply(percentageOfPrice).toBigInteger();
+        return total.multiply(percentageOfPrice);
     }
 }

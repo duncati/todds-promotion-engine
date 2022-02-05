@@ -1,6 +1,6 @@
 package org.duncati.promotionengine;
 
-import java.math.BigInteger;
+import java.math.BigDecimal;
 import java.util.Collection;
 
 public interface IRepository {
@@ -10,14 +10,14 @@ public interface IRepository {
      * @param sku the stop keeping unit
      * @param price the price of this unit
      */
-    void setPrice(String sku, BigInteger price);
+    void setPrice(String sku, BigDecimal price);
 
     /**
      * This returns the price of this sku to the given price.
      * @param sku the stop keeping unit
      * @return the price of this sku
      */
-    BigInteger getPrice(String sku) throws DataNotFoundException;
+    BigDecimal getPrice(String sku) throws DataNotFoundException;
 
     /**
      * Returns a collection of all known promotions.
