@@ -32,7 +32,7 @@ public class PromotionEngineTest {
         cart.addItem("A");
         cart.addItem("B");
         cart.addItem("C");
-        Assertions.assertDoesNotThrow(() -> Assertions.assertEquals(BigDecimal.valueOf(100), cart.getTotal()));
+        Assertions.assertDoesNotThrow(() -> Assertions.assertEquals(BigDecimal.valueOf(100), cart.getTotalPrice()));
     }
 
     @Test
@@ -43,7 +43,7 @@ public class PromotionEngineTest {
         cart.addItem("A", 5);
         cart.addItem("B", 5);
         cart.addItem("C");
-        Assertions.assertDoesNotThrow(() -> Assertions.assertEquals(BigDecimal.valueOf(370), cart.getTotal()));
+        Assertions.assertDoesNotThrow(() -> Assertions.assertEquals(BigDecimal.valueOf(370), cart.getTotalPrice()));
     }
 
     @Test
@@ -55,6 +55,6 @@ public class PromotionEngineTest {
         cart.addItem("B", 5);
         cart.addItem("C");
         cart.addItem("D");
-        Assertions.assertDoesNotThrow(() -> Assertions.assertEquals(BigDecimal.valueOf(280), cart.getTotal()));
+        Assertions.assertDoesNotThrow(() -> Assertions.assertEquals(BigDecimal.valueOf(280), cart.getTotalPrice()));
     }
 }

@@ -43,5 +43,5 @@ public interface ICart {
      * @return the total price of the cart
      * @throws DataNotFoundException any error encountered during price calculation (i.e. missing prices for sku)
      */
-    BigDecimal getTotal() throws DataNotFoundException;
+    BigDecimal getTotalPrice() throws DataNotFoundException;
 }

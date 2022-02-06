@@ -50,7 +50,7 @@ public class Cart implements ICart {
     }
 
     @Override
-    public BigDecimal getTotal() throws DataNotFoundException {
+    public BigDecimal getTotalPrice() throws DataNotFoundException {
         if (dirty) {
             calculateTotal();
         }
